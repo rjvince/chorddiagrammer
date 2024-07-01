@@ -4,6 +4,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
+import org.apache.commons.cli.*;
 
 import java.io.*;
 import java.text.DecimalFormat;
@@ -12,10 +13,23 @@ import java.util.List;
 
 public class Application {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ParseException {
         Configuration config = initConfiguration();
         Template tmpl = config.getTemplate("page-master.ftlh");
-        BufferedReader bufferedReader = initBuffer(args);
+
+        Options options = new Options();
+        options.addOption("h", "help", false, "print this message");
+        options.addOption("t", "transpose", true, "transpose <number of steps>");
+        CommandLineParser parser = new DefaultParser();
+        parser.parse(options, args);
+        CommandLine cmd = parser.parse(options, args);
+        if (cmd.hasOption("h")) {
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp("chorddiagrammer", options);
+            System.exit(0);
+        }
+
+        BufferedReader bufferedReader = initBuffer(cmd.getArgs());
         String input = bufferedReader.readLine();
         String filenameFmt = "%s-%s.svg";
         DecimalFormat df = new DecimalFormat("000");
@@ -44,7 +58,7 @@ public class Application {
 
     private static BufferedReader initBuffer(String[] args) throws FileNotFoundException {
         InputStreamReader isr;
-        if (args.length == 1) {
+        if (args.length >= 1) {
             isr = new FileReader(args[0]);
         } else {
             isr = new InputStreamReader(System.in);
