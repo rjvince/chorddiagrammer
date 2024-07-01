@@ -47,6 +47,17 @@ public class ChordDiagram {
         }
     }
 
+    public String getTuningStr() {
+        StringBuilder tuningStr = new StringBuilder();
+        for (int i = 0; i < tuning.length; i++) {
+            tuningStr.append(formatNote(tuning[i]));
+            if (i < tuning.length - 1) {
+                tuningStr.append("-");
+            }
+        }
+        return tuningStr.toString();
+    }
+
     @Override
     public String toString() {
         String fmt = "Name: %s%nStart At: %d%nFingering: %d-%d-%d-%d%nVoice: %s";

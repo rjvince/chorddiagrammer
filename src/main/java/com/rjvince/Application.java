@@ -16,6 +16,7 @@ public class Application {
     public static void main(String[] args) throws IOException, ParseException {
         Configuration config = initConfiguration();
         Template tmpl = config.getTemplate("page-master.ftlh");
+        String dir;
 
         Options options = new Options();
         options.addOption("h", "help", false, "print this message");
@@ -43,15 +44,31 @@ public class Application {
             input = bufferedReader.readLine();
         }
 
-        for (int i = 0; i < chords.size(); i++) {
-            ChordDiagram c = chords.get(i);
-            String filename = String.format(filenameFmt, df.format(i + 1), c.getName());
-            filename = filename.replace('♭', 'b').replace('♯', '#');
-            try (Writer writer = new FileWriter(filename)) {
-                tmpl.process(c, writer);
-                System.out.println(c);
-            } catch (TemplateException e) {
-                e.printStackTrace();
+        if (!chords.isEmpty()) {
+            dir = chords.get(0).getTuningStr();
+            makeTuningDirectory(dir);
+
+            for (int i = 0; i < chords.size(); i++) {
+                ChordDiagram c = chords.get(i);
+                String filename = dir + "/" + String.format(filenameFmt, df.format(i + 1), c.getName());
+                filename = filename.replace('♭', 'b').replace('♯', '#');
+                try (Writer writer = new FileWriter(filename)) {
+                    tmpl.process(c, writer);
+                    System.out.println(c);
+                } catch (TemplateException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private static void makeTuningDirectory(String tuningStr) {
+        File dir = new File(tuningStr);
+        if (!dir.exists()) {
+            boolean result = dir.mkdir();
+            if (!result) {
+                System.err.println("Could not create directory: " + tuningStr);
+                System.exit(1);
             }
         }
     }
