@@ -35,9 +35,20 @@ For example, the 5-5-5-7 variant FMaj7 can be defined as:
 F,Maj7,5,1-1-1-3
 ```
 
-# Implementation Notes
+## Alternate Tunings
+The default tuning is G-C-E-A, which is pretty much standard at my location in spacetime. the `-t | --transpose` argument
+can pitch shift the input.
 
-Assumes GCEA tuning, but I plan to make it flexible soon, since one of my goals for this was to generate diagrams for DGBE as needed. The other goal was to generate whole-page size diagrams that I could show someone across the room.
+Some examples
+```
+// Baritone (D-G-B-E)
+java -Dconsole.encoding=UTF-8 -Dfile.encoding=UTF-8 -jar chorddiagrammer.jar -t -5
+
+// D-Tuning (A-D-F#-B)
+java -Dconsole.encoding=UTF-8 -Dfile.encoding=UTF-8 -jar chorddiagrammer.jar -t 2
+```
+
+# Implementation Notes
 
 The [Alata](https://fonts.google.com/specimen/Alata) font is currently hardcoded. I like the way it looks and the SVG template was created with it in mind. If you don't have it, I can't say what will happen.
 

@@ -11,12 +11,8 @@ public enum Note {
         this.index = x % 12;
     }
 
-    public Note shiftUp(int x) {
-        return values()[(this.index + x) % 12];
-    }
-
-    public Note shiftDown(int x) {
-        return values()[(this.index - x) % 12];
+    public Note shift(int x) {
+        return values()[Math.floorMod(this.index + x, 12)];
     }
 
     public String useSharps() {

@@ -16,11 +16,12 @@ public class Application {
     public static void main(String[] args) throws IOException, ParseException {
         Configuration config = initConfiguration();
         Template tmpl = config.getTemplate("page-master.ftlh");
+        Integer transposeSteps = 0;
         String dir;
 
         Options options = new Options();
         options.addOption("h", "help", false, "print this message");
-        options.addOption("t", "transpose", true, "transpose <number of steps>");
+        options.addOption("t", "transpose", true, "transpose <number of semitones>");
         CommandLineParser parser = new DefaultParser();
         parser.parse(options, args);
         CommandLine cmd = parser.parse(options, args);
@@ -28,6 +29,10 @@ public class Application {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("chorddiagrammer", options);
             System.exit(0);
+        }
+
+        if (cmd.hasOption("t")) {
+            transposeSteps = Integer.parseInt(cmd.getOptionValue("t"));
         }
 
         BufferedReader bufferedReader = initBuffer(cmd.getArgs());
@@ -39,7 +44,8 @@ public class Application {
 
         while (input != null) {
             if (!input.startsWith("=")) {
-                chords.add(new ChordDiagram(input));
+                ChordDiagram cd = new ChordDiagram(input, transposeSteps);
+                chords.add(cd);
             }
             input = bufferedReader.readLine();
         }
@@ -63,7 +69,8 @@ public class Application {
     }
 
     private static void makeTuningDirectory(String tuningStr) {
-        File dir = new File(tuningStr);
+        String dirname = tuningStr.replace('♭', 'b').replace('♯', '#');
+        File dir = new File(dirname);
         if (!dir.exists()) {
             boolean result = dir.mkdir();
             if (!result) {
