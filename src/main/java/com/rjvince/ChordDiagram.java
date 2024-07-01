@@ -2,6 +2,8 @@ package com.rjvince;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ChordDiagram {
     private Note root;
@@ -12,6 +14,7 @@ public class ChordDiagram {
     private List<String> noteNames;
     private Note[] tuning = {Note.G, Note.C, Note.E, Note.A};
     private boolean sharps;
+    private Set sharpSet = Set.of(Note.G, Note.D, Note.A, Note.E, Note.B, Note.Fs);
 
     public ChordDiagram(String row) {
         this(row, 0);
@@ -33,10 +36,6 @@ public class ChordDiagram {
             fingers.add(Integer.parseInt(finger));
         }
 
-        if (tokens.length == 5) {
-            sharps = tokens[4].trim().equals("sharps");
-        }
-
         int offset = startFret == 0 ? 0 : startFret - 1;
         noteNames = new ArrayList<>(4);
         for (int i = 0; i < fingers.size(); i++) {
@@ -44,6 +43,17 @@ public class ChordDiagram {
         }
 
         name = formatNote(root) + chordType;
+    }
+
+    public boolean isSharpKey(Note root, String chordType) {
+        Note lookup = root;
+
+        // Save some effort and use the relative minor
+        if (chordType.startsWith("m")) {
+            lookup = root.shift(3);
+        }
+
+        return sharpSet.contains(lookup);
     }
 
     private void transposeChord(Integer transposeSteps) {
@@ -54,7 +64,7 @@ public class ChordDiagram {
     }
 
     private String formatNote(Note n) {
-        if (sharps) {
+        if (isSharpKey(this.root, this.chordType)) {
             return n.useSharps().replace('s', '♯');
         } else {
             return n.useFlats().replace('f', '♭');

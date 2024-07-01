@@ -18,15 +18,17 @@ So I don't forget, those encoding arguments are needed if we see '?' instead of 
 
 The input file format is:
 ```
-Chord Root, Chord Type (blank for Major chords), Starting Position, Fingering in 0-0-0-0 (, optional: sharps)
+Chord Root, Chord Type (blank for normal major chords), Starting Position, Fingering in 0-0-0-0
+
+Important: Chord Type does a case-sensitive check for 'm' to determine if a chord is minor.
+So Maj7 chords must start with that capital M, otherwise the sharp-flat detection will go haywire.
 ```
 
 Some examples:
 ```
 C,,0,0-0-0-3
-C,,0,5-4-3-3
 G,7,0,0-2-1-2
-D,,0,2-2-2-0,sharps
+A,m,0,1-0-0-0
 ```
 For chords that are further up the fretboard, you can specify a starting fret. The fingering is then relative to that.
 
