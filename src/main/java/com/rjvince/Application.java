@@ -25,7 +25,7 @@ public class Application {
         CommandLineParser parser = new DefaultParser();
         parser.parse(options, args);
         CommandLine cmd = parser.parse(options, args);
-        if (cmd.hasOption("h")) {
+        if (cmd.hasOption("h") || args.length == 0) {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("chorddiagrammer", options);
             System.exit(0);
