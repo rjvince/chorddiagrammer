@@ -18,21 +18,21 @@ So I don't forget, those encoding arguments are needed if we see '?' instead of 
 
 The input file format is:
 ```
-Chord Name, Starting Position, Fingering in 0-0-0-0 (, optional: sharps)
+Chord Root, Chord Type (blank for Major chords), Starting Position, Fingering in 0-0-0-0 (, optional: sharps)
 ```
 
 Some examples:
 ```
-C,0,0-0-0-3
-C,0,5-4-3-3
-G7,0,0-2-1-2
-D,0,2-2-2-0,sharps
+C,,0,0-0-0-3
+C,,0,5-4-3-3
+G,7,0,0-2-1-2
+D,,0,2-2-2-0,sharps
 ```
 For chords that are further up the fretboard, you can specify a starting fret. The fingering is then relative to that.
 
 For example, the 5-5-5-7 variant FMaj7 can be defined as:
 ```
-FMaj7,5,1-1-1-3
+F,Maj7,5,1-1-1-3
 ```
 
 # Implementation Notes
