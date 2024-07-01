@@ -38,10 +38,10 @@ F,Maj7,5,1-1-1-3
 ```
 
 ## Alternate Tunings
-The default tuning is G-C-E-A, which is pretty much standard at my location in spacetime. the `-t | --transpose` argument
-can pitch shift the input.
+The default tuning is G-C-E-A, which is pretty much standard at my location in spacetime. The `-t | --transpose` argument
+can shift the tuning by a number of semitones.
 
-Some examples
+Some examples:
 ```
 // Baritone (D-G-B-E)
 java -Dconsole.encoding=UTF-8 -Dfile.encoding=UTF-8 -jar chorddiagrammer.jar -t -5
