@@ -50,7 +50,13 @@ java -Dconsole.encoding=UTF-8 -Dfile.encoding=UTF-8 -jar chorddiagrammer.jar -t 
 java -Dconsole.encoding=UTF-8 -Dfile.encoding=UTF-8 -jar chorddiagrammer.jar -t 2
 ```
 
-# Implementation Notes
+# Implementation Notes and Gotchas
+
+Using `startswith("m")` for minor chords isn't great, but it is at least conventional.
+
+The sharps/flats detection isn't very smart. It does its best based on the root note of the chord. This means that
+something like E7♭5 is going to show an A♯ instead of a B♭. Until there's a fix for this, at least the SVG
+files are easily editable in a text editor.
 
 The [Alata](https://fonts.google.com/specimen/Alata) font is currently hardcoded. I like the way it looks and the SVG template was created with it in mind. If you don't have it, I can't say what will happen.
 
