@@ -14,6 +14,7 @@ public class ChordDiagram {
     private List<String> noteNames;
     private Note[] tuning = {Note.G, Note.C, Note.E, Note.A};
     private Set sharpSet = Set.of(Note.G, Note.D, Note.A, Note.E, Note.B, Note.Fs);
+    private boolean suppressNoteNames = false;
 
     public ChordDiagram(String row) {
         this(row, 0);
@@ -127,6 +128,13 @@ public class ChordDiagram {
         this.noteNames = noteNames;
     }
 
+    public boolean isSuppressNoteNames() {
+        return suppressNoteNames;
+    }
+
+    public void setSuppressNoteNames(boolean suppressNoteNames) {
+        this.suppressNoteNames = suppressNoteNames;
+    }
 }
 
 // C, 0, 0-0-0-1/

@@ -2,7 +2,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
         "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 621 810" version="1.1" xmlns="http://www.w3.org/2000/svg"
-     xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/"
+     xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
      style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><g
             transform="matrix(0.24,0,0,0.24,-770.788,-2158.36)">
         <g id="Master" transform="matrix(1,0,0,1,3211.62,8993.17)">
@@ -112,9 +112,11 @@
                 </g>
             </#if>
             <text id="chord-name" x="1294" y="540px" text-anchor="middle" style="font-family:'Alata-Regular', 'Alata';font-size:400px;">${displayName}</text>
+            <#if !suppressNoteNames>
             <text id="_1-note" x="600px" y="3090px" text-anchor="middle" style="font-family:'Alata-Regular', 'Alata';font-size:300px;">${noteNames[0]}</text>
             <text id="_2-note" x="1060px" y="3090px" text-anchor="middle" style="font-family:'Alata-Regular', 'Alata';font-size:300px;">${noteNames[1]}</text>
             <text id="_3-note" x="1510px" y="3090px"  text-anchor="middle" style="font-family:'Alata-Regular', 'Alata';font-size:300px;">${noteNames[2]}</text>
             <text id="_4-note" x="1970px" y="3090px" text-anchor="middle" style="font-family:'Alata-Regular', 'Alata';font-size:300px;">${noteNames[3]}</text>
+            </#if>
         </g>
     </g></svg>

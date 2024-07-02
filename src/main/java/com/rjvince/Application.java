@@ -18,12 +18,14 @@ public class Application {
         Template tmpl = config.getTemplate("page-master.ftlh");
         Integer transposeSteps = 0;
         boolean verbose = false;
+        boolean suppressNames = false;
         String dir;
 
         Options options = new Options();
         options.addOption("h", "help", false, "print this message");
         options.addOption("t", "transpose", true, "transpose <number of semitones>");
         options.addOption("v", "verbose", false, "verbose mode");
+        options.addOption("s", "suppress-note-names", false, "suppress-note-names");
         CommandLineParser parser = new DefaultParser();
         parser.parse(options, args);
         CommandLine cmd = parser.parse(options, args);
@@ -37,9 +39,14 @@ public class Application {
             transposeSteps = Integer.parseInt(cmd.getOptionValue("t"));
         }
 
-        if (cmd.hasOption("-v"))
+        if (cmd.hasOption("v"))
         {
             verbose = true;
+        }
+
+        if (cmd.hasOption("s"))
+        {
+            suppressNames = true;
         }
 
         BufferedReader bufferedReader = initBuffer(cmd.getArgs());
@@ -52,6 +59,7 @@ public class Application {
         while (input != null) {
             if (!input.startsWith("=")) {
                 ChordDiagram cd = new ChordDiagram(input, transposeSteps);
+                cd.setSuppressNoteNames(suppressNames);
                 chords.add(cd);
             }
             input = bufferedReader.readLine();
