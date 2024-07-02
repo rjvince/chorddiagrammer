@@ -111,7 +111,7 @@
                     <rect x="627.203" y="5067.91" width="1346.91" height="108.545"/>
                 </g>
             </#if>
-            <text id="chord-name" x="1294" y="540px" text-anchor="middle" style="font-family:'Alata-Regular', 'Alata';font-size:400px;">${name}</text>
+            <text id="chord-name" x="1294" y="540px" text-anchor="middle" style="font-family:'Alata-Regular', 'Alata';font-size:400px;">${displayName}</text>
             <text id="_1-note" x="600px" y="3090px" text-anchor="middle" style="font-family:'Alata-Regular', 'Alata';font-size:300px;">${noteNames[0]}</text>
             <text id="_2-note" x="1060px" y="3090px" text-anchor="middle" style="font-family:'Alata-Regular', 'Alata';font-size:300px;">${noteNames[1]}</text>
             <text id="_3-note" x="1510px" y="3090px"  text-anchor="middle" style="font-family:'Alata-Regular', 'Alata';font-size:300px;">${noteNames[2]}</text>

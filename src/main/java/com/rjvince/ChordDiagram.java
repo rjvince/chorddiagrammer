@@ -40,7 +40,7 @@ public class ChordDiagram {
             noteNames.add(formatNote(tuning[i].shift(offset + fingers.get(i))));
         }
 
-        name = (formatNote(root) + chordType).replace('♭', 'b').replace('♯', '#');;
+        name = (formatNote(root) + chordType);
     }
 
     public boolean isSharpKey(Note root, String chordType) {
@@ -97,6 +97,10 @@ public class ChordDiagram {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDisplayName() {
+        return name.replace('b', '♭').replace('#', '♯');
     }
 
     public int getStartFret() {
