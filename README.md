@@ -5,17 +5,31 @@ Generates SVG diagrams of ukulele chords.
 It doesn't calculate the chords themselves, but reads an input file of text notation and generates the SVG. The reason for this being that it lets me
 do things like calling 2-0-2-0 a D7 even though there's no D in it (this is frequently preferred on ukulele).
 
-It will, however, tell you what the notes are. This is so helpful for learning the fretboard that it can't be switched off. It's not a bug -- it's a feature!
+It will, however, tell you what the notes are. I think this is really helpful for learning the fretboard, so it's
+switched on by default.
 
 # Operation
 
 Run with:
 ```
-$ java -Dconsole.encoding=UTF-8 -Dfile.encoding=UTF-8 -jar <path to chorddiagrammer.jar> <OPTIONAL: path to input file, otherwise it'll attempt to read STDIN>
+$ java -Dconsole.encoding=UTF-8 -Dfile.encoding=UTF-8 -jar <path to chorddiagrammer.jar> <path to input file>
 ```
 
 So I don't forget, those encoding arguments are needed if we see '?' instead of sharps and flats.
 
+### Options
+```
+usage: chord-diagrammer <input-file>
+ -c,--clean                 clean output directory first - as in delete
+                            everything
+ -h,--help                  print this message
+ -s,--suppress-note-names   suppress appearance of note names under
+                            diagram
+ -t,--transpose <arg>       transpose <number of semitones>
+ -v,--verbose               verbose mode
+```
+
+# File Format
 The input file format is:
 ```
 Chord Root, Chord Type (blank for normal major chords), Starting Position, Fingering in 0-0-0-0
@@ -37,7 +51,7 @@ For example, the 5-5-5-7 variant FMaj7 can be defined as:
 F,Maj7,5,1-1-1-3
 ```
 
-## Alternate Tunings
+# Alternate Tunings
 The default tuning is G-C-E-A, which is pretty much standard at my location in spacetime. The `-t | --transpose` argument
 can shift the tuning by a number of semitones.
 

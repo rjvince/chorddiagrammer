@@ -7,82 +7,99 @@ import freemarker.template.TemplateExceptionHandler;
 import org.apache.commons.cli.*;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Application {
 
-    public static void main(String[] args) throws IOException, ParseException {
+    public static void main(String[] args) throws IOException {
         Configuration config = initConfiguration();
         Template tmpl = config.getTemplate("page-master.ftlh");
-        Integer transposeSteps = 0;
-        boolean verbose = false;
-        boolean suppressNames = false;
+        ChordDiagrammerOptions cdOpts;
         String dir;
 
         Options options = new Options();
         options.addOption("h", "help", false, "print this message");
-        options.addOption("t", "transpose", true, "transpose <number of semitones>");
         options.addOption("v", "verbose", false, "verbose mode");
-        options.addOption("s", "suppress-note-names", false, "suppress-note-names");
-        CommandLineParser parser = new DefaultParser();
-        parser.parse(options, args);
-        CommandLine cmd = parser.parse(options, args);
-        if (cmd.hasOption("h") || args.length == 0) {
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("chord-diagrammer", options);
-            System.exit(0);
-        }
+        options.addOption("s", "suppress-note-names", false, "suppress appearance of note names under diagram");
+        options.addOption("c", "clean", false, "clean output directory first - as in delete everything");
+        options.addOption("t", "transpose", true, "transpose <number of semitones>");
 
-        if (cmd.hasOption("t")) {
-            transposeSteps = Integer.parseInt(cmd.getOptionValue("t"));
-        }
+        try {
+            cdOpts = parseOptions(options, args);
 
-        if (cmd.hasOption("v"))
-        {
-            verbose = true;
-        }
+            BufferedReader bufferedReader = initBuffer(cdOpts.inFile());
+            String input = bufferedReader.readLine();
+            String filenameFmt = "%s-%s.svg";
+            DecimalFormat df = new DecimalFormat("000");
 
-        if (cmd.hasOption("s"))
-        {
-            suppressNames = true;
-        }
+            List<ChordDiagram> chords = new LinkedList<>();
 
-        BufferedReader bufferedReader = initBuffer(cmd.getArgs());
-        String input = bufferedReader.readLine();
-        String filenameFmt = "%s-%s.svg";
-        DecimalFormat df = new DecimalFormat("000");
-
-        List<ChordDiagram> chords = new LinkedList<>();
-
-        while (input != null) {
-            if (!input.startsWith("=")) {
-                ChordDiagram cd = new ChordDiagram(input, transposeSteps);
-                cd.setSuppressNoteNames(suppressNames);
-                chords.add(cd);
+            while (input != null) {
+                if (!input.startsWith("=")) {
+                    ChordDiagram cd = new ChordDiagram(input, cdOpts.transposeSteps());
+                    cd.setSuppressNoteNames(cdOpts.suppressNoteNames());
+                    chords.add(cd);
+                }
+                input = bufferedReader.readLine();
             }
-            input = bufferedReader.readLine();
-        }
 
-        if (!chords.isEmpty()) {
-            dir = chords.get(0).getTuningStr();
-            makeTuningDirectory(dir);
+            if (!chords.isEmpty()) {
+                dir = chords.get(0).getTuningStr();
+                if (cdOpts.clean()) {
+                    cleanTuningDirectory(dir);
+                }
+                makeTuningDirectory(dir);
 
-            for (int i = 0; i < chords.size(); i++) {
-                ChordDiagram c = chords.get(i);
-                String filename = dir + "/" + String.format(filenameFmt, df.format(i + 1), c.getName());
-                filename = filename.replace('♭', 'b').replace('♯', '#');
-                try (Writer writer = new FileWriter(filename)) {
-                    tmpl.process(c, writer);
-                    if (verbose) {
-                        System.out.println(c);
+                for (int i = 0; i < chords.size(); i++) {
+                    ChordDiagram c = chords.get(i);
+                    String filename = dir + "/" + String.format(filenameFmt, df.format(i + 1), c.getName());
+                    filename = filename.replace('♭', 'b').replace('♯', '#');
+                    try (Writer writer = new FileWriter(filename)) {
+                        tmpl.process(c, writer);
+                        if (cdOpts.verbose()) {
+                            System.out.println(c);
+                        }
+                    } catch (TemplateException e) {
+                        e.printStackTrace();
                     }
-                } catch (TemplateException e) {
-                    e.printStackTrace();
                 }
             }
+        } catch (ParseException e) {
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp("chord-diagrammer <input-file>", options);
+            System.exit(0);
         }
+    }
+
+    private static void cleanTuningDirectory(String dir) {
+        File dirFile = new File(dir);
+        try {
+            Files.walk(dirFile.toPath())
+                    .filter(p -> p.endsWith(".svg"))
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+        } catch (IOException e) {
+            System.err.println("Couldn't clear " + dir
+                    + "\nMaybe it wasn't there? I'll keep going though.");
+        }
+    }
+
+    private static ChordDiagrammerOptions parseOptions(Options options, String[] args) throws ParseException {
+        CommandLineParser parser = new DefaultParser();
+        CommandLine cmd = parser.parse(options, args);
+
+        if (cmd.hasOption("h") || args.length == 0) {
+            throw new ParseException("Help flag");
+        }
+
+        int transposeSteps = cmd.hasOption("t") ? Integer.parseInt(cmd.getOptionValue("t")) : 0;
+        String filename = cmd.getArgs().length > 0 ? cmd.getArgs()[0] : null;
+
+        return new ChordDiagrammerOptions(cmd.hasOption("v"), cmd.hasOption("s"), cmd.hasOption("c"), transposeSteps, filename);
     }
 
     private static void makeTuningDirectory(String tuningStr) {
@@ -97,13 +114,8 @@ public class Application {
         }
     }
 
-    private static BufferedReader initBuffer(String[] args) throws FileNotFoundException {
-        InputStreamReader isr;
-        if (args.length >= 1) {
-            isr = new FileReader(args[0]);
-        } else {
-            isr = new InputStreamReader(System.in);
-        }
+    private static BufferedReader initBuffer(String inFile) throws FileNotFoundException {
+        InputStreamReader isr = new FileReader(inFile);
         return new BufferedReader(isr);
     }
 
