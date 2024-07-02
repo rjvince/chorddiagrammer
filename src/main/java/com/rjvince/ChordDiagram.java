@@ -13,7 +13,6 @@ public class ChordDiagram {
     private List<Integer> fingers;
     private List<String> noteNames;
     private Note[] tuning = {Note.G, Note.C, Note.E, Note.A};
-    private boolean sharps;
     private Set sharpSet = Set.of(Note.G, Note.D, Note.A, Note.E, Note.B, Note.Fs);
 
     public ChordDiagram(String row) {
@@ -25,7 +24,6 @@ public class ChordDiagram {
         root = Note.valueOf(tokens[0]);
         chordType = tokens[1];
         startFret = Integer.parseInt(tokens[2].trim());
-        sharps = false;
 
         if (transposeSteps != 0) {
             transposeChord(transposeSteps);
@@ -42,7 +40,7 @@ public class ChordDiagram {
             noteNames.add(formatNote(tuning[i].shift(offset + fingers.get(i))));
         }
 
-        name = formatNote(root) + chordType;
+        name = (formatNote(root) + chordType).replace('♭', 'b').replace('♯', '#');;
     }
 
     public boolean isSharpKey(Note root, String chordType) {

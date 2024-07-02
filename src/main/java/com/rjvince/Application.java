@@ -17,22 +17,29 @@ public class Application {
         Configuration config = initConfiguration();
         Template tmpl = config.getTemplate("page-master.ftlh");
         Integer transposeSteps = 0;
+        boolean verbose = false;
         String dir;
 
         Options options = new Options();
         options.addOption("h", "help", false, "print this message");
         options.addOption("t", "transpose", true, "transpose <number of semitones>");
+        options.addOption("v", "verbose", false, "verbose mode");
         CommandLineParser parser = new DefaultParser();
         parser.parse(options, args);
         CommandLine cmd = parser.parse(options, args);
         if (cmd.hasOption("h") || args.length == 0) {
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("chorddiagrammer", options);
+            formatter.printHelp("chord-diagrammer", options);
             System.exit(0);
         }
 
         if (cmd.hasOption("t")) {
             transposeSteps = Integer.parseInt(cmd.getOptionValue("t"));
+        }
+
+        if (cmd.hasOption("-v"))
+        {
+            verbose = true;
         }
 
         BufferedReader bufferedReader = initBuffer(cmd.getArgs());
@@ -60,7 +67,9 @@ public class Application {
                 filename = filename.replace('♭', 'b').replace('♯', '#');
                 try (Writer writer = new FileWriter(filename)) {
                     tmpl.process(c, writer);
-                    System.out.println(c);
+                    if (verbose) {
+                        System.out.println(c);
+                    }
                 } catch (TemplateException e) {
                     e.printStackTrace();
                 }
