@@ -79,8 +79,8 @@ public class Application {
         File dirFile = new File(dir);
         try {
             Files.walk(dirFile.toPath())
-                    .filter(p -> p.endsWith(".svg"))
                     .map(Path::toFile)
+                    .filter(f -> f.getName().endsWith(".svg"))
                     .forEach(File::delete);
         } catch (IOException e) {
             System.err.println("Couldn't clear " + dir
@@ -92,7 +92,7 @@ public class Application {
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
 
-        if (cmd.hasOption("h") || args.length == 0) {
+        if (cmd.hasOption("h") || cmd.getArgs().length == 0) {
             throw new ParseException("Help flag");
         }
 

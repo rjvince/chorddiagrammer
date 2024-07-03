@@ -1,5 +1,9 @@
 package com.rjvince;
 
+/**
+ * Represents a note in the 12-step chromatic scale
+ *
+ */
 public enum Note {
     C(0), Df(1), D(2), Ef(3), E(4),
     F(5), Fs(6), G(7), Af(8), A(9),
@@ -11,31 +15,40 @@ public enum Note {
         this.index = x % 12;
     }
 
+    /**
+     * Produce a new note, shifted by a number of semitones from this one
+     *
+     * @param x can be positive or negative
+     * @return
+     */
     public Note shift(int x) {
         return values()[Math.floorMod(this.index + x, 12)];
     }
 
+    /**
+     * Return alternate names for sharp notes.
+     * E.g. the note between C and D could be a c-sharp or a d-flat
+     * depending on context.
+     *
+     * @return
+     */
     public String useSharps() {
-        String ret;
-        switch(this) {
-            case Df:
-                ret = "Cs";
-                break;
-            case Ef:
-                ret = "Ds";
-                break;
-            case Af:
-                ret = "Gs";
-                break;
-            case Bf:
-                ret = "As";
-                break;
-            default:
-                ret = this.name();
-        }
-        return ret;
+        return switch (this) {
+            case Df -> "Cs";
+            case Ef -> "Ds";
+            case Af -> "Gs";
+            case Bf -> "As";
+            default -> this.name();
+        };
     }
 
+    /**
+     * Return alternate names for flat notes.
+     * E.g. the note between C and D could be a c-sharp or a d-flat
+     * depending on context.
+     *
+     * @return
+     */
     public String useFlats() {
         if (this == Fs) {
             return "Gf";

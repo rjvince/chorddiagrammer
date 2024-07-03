@@ -2,18 +2,20 @@ package com.rjvince;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+/**
+ * Represents a Chord Diagram on a fretboard with four strings.
+ */
 public class ChordDiagram {
     private Note root;
-    private String chordType;
+    private final String chordType;
     private String name;
     private int startFret;
     private List<Integer> fingers;
     private List<String> noteNames;
-    private Note[] tuning = {Note.G, Note.C, Note.E, Note.A};
-    private Set sharpSet = Set.of(Note.G, Note.D, Note.A, Note.E, Note.B, Note.Fs);
+    private final Note[] tuning = {Note.G, Note.C, Note.E, Note.A};
+    private final Set<Note> sharpSet = Set.of(Note.G, Note.D, Note.A, Note.E, Note.B, Note.Fs);
     private boolean suppressNoteNames = false;
 
     public ChordDiagram(String row) {
@@ -44,6 +46,17 @@ public class ChordDiagram {
         name = (formatNote(root) + chordType);
     }
 
+    /**
+     * Look up whether the chord should use sharps or flats. This is determined
+     * by acting like the root note is the key signature.
+     * Caveat: More complex chords might report a (technically) wrong name for some notes,
+     * e.g.: a dominant seventh flat five chord might give the wrong name for the flat fifth if
+     * the key generally uses sharps.
+     *
+     * @param root
+     * @param chordType
+     * @return true if the key would use sharp
+     */
     public boolean isSharpKey(Note root, String chordType) {
         Note lookup = root;
 
@@ -55,6 +68,11 @@ public class ChordDiagram {
         return sharpSet.contains(lookup);
     }
 
+    /**
+     * Pitch shift the whole chord
+     *
+     * @param transposeSteps
+     */
     private void transposeChord(Integer transposeSteps) {
         root = root.shift(transposeSteps);
         for (int i = 0; i < tuning.length; i++) {
@@ -62,6 +80,13 @@ public class ChordDiagram {
         }
     }
 
+    /**
+     * Format the note name for display in SVG by converting alphabetical
+     * characters to real sharps and flats.
+     *
+     * @param n
+     * @return
+     */
     private String formatNote(Note n) {
         if (isSharpKey(this.root, this.chordType)) {
             return n.useSharps().replace('s', '♯');
@@ -70,6 +95,12 @@ public class ChordDiagram {
         }
     }
 
+    /**
+     * A string representation of the instrument tuning.
+     * E.g.: G-C-E-A, D-G-B-E
+     *
+     * @return A string representing the tuning
+     */
     public String getTuningStr() {
         StringBuilder tuningStr = new StringBuilder();
         for (int i = 0; i < tuning.length; i++) {
@@ -136,5 +167,3 @@ public class ChordDiagram {
         this.suppressNoteNames = suppressNoteNames;
     }
 }
-
-// C, 0, 0-0-0-1/
