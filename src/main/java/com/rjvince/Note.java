@@ -1,5 +1,8 @@
 package com.rjvince;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents a note in the 12-step chromatic scale
  *
@@ -56,5 +59,13 @@ public enum Note {
         else {
             return this.name();
         }
+    }
+
+    public List<Note> majorChord() {
+        ArrayList<Note> chord = new ArrayList<>();
+        chord.add(this);
+        chord.add(Interval.MAJOR_THIRD.findFrom(this));
+        chord.add(Interval.PERFECT_FIFTH.findFrom(this));
+        return chord;
     }
 }

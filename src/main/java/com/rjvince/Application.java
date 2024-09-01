@@ -10,6 +10,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,9 +28,19 @@ public class Application {
         options.addOption("s", "suppress-note-names", false, "suppress appearance of note names under diagram");
         options.addOption("c", "clean", false, "clean output directory first - as in delete everything");
         options.addOption("t", "transpose", true, "transpose <number of semitones>");
-
+        options.addOption("f", "find", true, "(prototype) find chord from root");
+        
         try {
             cdOpts = parseOptions(options, args);
+
+            if (cdOpts.find() != null) {
+                List<Note> chord = cdOpts.find().majorChord();
+
+                for (Note note : chord) {
+                    System.out.println(note);
+                }
+                System.exit(0);
+            }
 
             BufferedReader bufferedReader = initBuffer(cdOpts.inFile());
             String input = bufferedReader.readLine();
@@ -92,14 +103,15 @@ public class Application {
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
 
-        if (cmd.hasOption("h") || cmd.getArgs().length == 0) {
+        if (cmd.hasOption("h") || (cmd.getArgs().length == 0 && !cmd.hasOption("f"))) {
             throw new ParseException("Help flag");
         }
 
         int transposeSteps = cmd.hasOption("t") ? Integer.parseInt(cmd.getOptionValue("t")) : 0;
+        Note findRoot = cmd.hasOption("f") ? Note.valueOf(cmd.getOptionValue("f")) : null;
         String filename = cmd.getArgs().length > 0 ? cmd.getArgs()[0] : null;
 
-        return new ChordDiagrammerOptions(cmd.hasOption("v"), cmd.hasOption("s"), cmd.hasOption("c"), transposeSteps, filename);
+        return new ChordDiagrammerOptions(cmd.hasOption("v"), findRoot, cmd.hasOption("s"), cmd.hasOption("c"), transposeSteps, filename);
     }
 
     private static void makeTuningDirectory(String tuningStr) {
